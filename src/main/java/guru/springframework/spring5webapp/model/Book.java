@@ -1,6 +1,7 @@
 package guru.springframework.spring5webapp.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Book {
@@ -19,7 +21,8 @@ public class Book {
 
   private String title;
   private String isbn;
-  private String publisher;
+  @OneToOne
+  private Publisher publisher;
 
   @ManyToMany
   @JoinTable(name="author_book", joinColumns = @JoinColumn(name = "book_id"),
@@ -28,17 +31,17 @@ public class Book {
 
   public Book() {}
 
-  public Book(String title, String isbn, String publisher) {
+  public Book(String title, String isbn, Publisher publisher) {
     this.title = title;
     this.isbn = isbn;
     this.publisher = publisher;
   }
 
-  public Book(String title, String isbn, String publisher, Set<Author> authors) {
+  public Book(String title, String isbn, Set<Author> authors, Publisher publisher) {
     this.title = title;
     this.isbn = isbn;
-    this.publisher = publisher;
     this.authors = authors;
+    this.publisher = publisher;
   }
 
   public Long getId() {
@@ -65,13 +68,6 @@ public class Book {
     this.isbn = isbn;
   }
 
-  public String getPublisher() {
-    return publisher;
-  }
-
-  public void setPublisher(String publisher) {
-    this.publisher = publisher;
-  }
 
   public Set<Author> getAuthors() {
     return authors;
@@ -79,5 +75,32 @@ public class Book {
 
   public void setAuthors(Set<Author> authors) {
     this.authors = authors;
+  }
+
+  public Publisher getPublishers() { return publisher; }
+
+  public void setPublishers(Publisher publishers) { this.publisher = publishers; }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Book book = (Book) o;
+    return Objects.equals(id, book.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
+
+  @Override
+  public String toString() {
+    return "Book{" + "id=" + id + ", title='" + title + '\'' + ", isbn='" + isbn + '\''
+        + '\'' + ", authors=" + authors + '}';
   }
 }
